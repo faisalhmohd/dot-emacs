@@ -18,10 +18,14 @@
                           projectile
                           web-mode
                           ido-vertical-mode
-			  idle-highlight-mode
-			  rjsx-mode
-			  ag
-                          yaml-mode)
+                          idle-highlight-mode
+                          rjsx-mode
+                          ag
+                          yaml-mode
+                          yasnippet
+                          yasnippet-snippets
+                          php-mode
+                          )
   "Default packages")
 
 (defun faisal/packages-installed-p ()
@@ -36,6 +40,11 @@
     (when (not (package-installed-p pkg))
       (package-install pkg))))
 
+;; Enable Yas Snipper Globally
+(setq yas-snippet-dirs
+      '("~/.emacs.d/snippets"))
+(yas-global-mode 1)
+
 ;; Splash Screen in Org Mode
 
 (setq inhibit-splash-screen t
@@ -48,6 +57,7 @@
 ;; Remove Menu bar
 
 (menu-bar-mode -1)
+(tool-bar-mode -1)
 
 ;; Marking text
 
@@ -89,9 +99,7 @@
 
 ;; Use visual indicator instead of noises
 (setq echo-keystrokes 0.1
-      use-dialog-box nil
-      visible-bell t)
-
+      use-dialog-box nil)
 ;; Enable ido mode for navigating in filesystem
 (ido-mode t)
 (setq ido-enable-flex-matching t
@@ -134,7 +142,7 @@
 (add-hook 'js-mode-hook 'js-custom)
 (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
 
-;; Load Wombat theme
+;; Load wombat theme
 (load-theme 'wombat t)
 
 ;; Color Codes
@@ -163,10 +171,41 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (php-mode aggressive-indent idle-highlight-mode gruvbox-theme spacemacs-theme rjsx-mode ido-vertical-mode auto-complete autopair))))
+    (use-package yasnippet-classic-snippets yasnippet php-mode aggressive-indent idle-highlight-mode gruvbox-theme spacemacs-theme rjsx-mode ido-vertical-mode auto-complete autopair))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;; set maximum indentation for description lists
+(setq org-list-description-max-indent 5)
+
+;; prevent demoting heading also shifting text inside sections
+(setq org-adapt-indentation nil)
+(setq org-startup-folded nil)
+(setq org-support-shift-select t)
+
+(setq org-capture-templates
+      '(("t" "todo" entry (file+headline "~/todo.org" "Tasks")
+         "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n")))
+
+;; set key for agenda
+(global-set-key (kbd "C-c a") 'org-agenda)
+
+;;capture todo items using C-c c t
+(define-key global-map (kbd "C-c c") 'org-capture)
+
+(setq org-agenda-files (quote ("~/todo.org")))
+
+;; Add PHP Support
+(autoload 'php-mode "php-mode" "Major mode for editing PHP code." t)
+(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
+(add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
+
+;; Add Multi Term Support
+
+(add-to-list 'load-path (locate-user-emacs-file "multi-term/"))
+(require 'multi-term)
+(setq multi-term-program "/usr/bin/fish")
