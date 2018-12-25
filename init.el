@@ -10,8 +10,6 @@
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
 
-(setq package-archive-enable-alist '(("melpa" magit f)))
-
 ;; Setup Packages
 (defvar faisal/packages '(autopair
                           auto-complete
@@ -25,6 +23,7 @@
                           yasnippet
                           yasnippet-snippets
                           php-mode
+			  magit
                           )
   "Default packages")
 
@@ -44,6 +43,9 @@
 (setq yas-snippet-dirs
       '("~/.emacs.d/snippets"))
 (yas-global-mode 1)
+(define-key yas-minor-mode-map (kbd "<tab>") nil)
+(define-key yas-minor-mode-map (kbd "TAB") nil)
+(define-key yas-minor-mode-map (kbd "C-t") 'yas-expand)
 
 ;; Splash Screen in Org Mode
 
@@ -73,6 +75,7 @@
 ;; Remove tabs and set width to 2
 (setq tab-width 2
       indent-tabs-mode nil)
+(setq css-indent-offset 2)
 
 ;; Never backup files
 (setq make-backup-files nil)
@@ -171,7 +174,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (use-package yasnippet-classic-snippets yasnippet php-mode aggressive-indent idle-highlight-mode gruvbox-theme spacemacs-theme rjsx-mode ido-vertical-mode auto-complete autopair))))
+    (xclip use-package yasnippet-classic-snippets yasnippet php-mode aggressive-indent idle-highlight-mode gruvbox-theme spacemacs-theme rjsx-mode ido-vertical-mode auto-complete autopair))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -204,62 +207,6 @@
 (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.inc$" . php-mode))
 
-;; Add Multi Term Support
-
-(add-to-list 'load-path (locate-user-emacs-file "multi-term/"))
-(require 'multi-term)
-(setq multi-term-program "/usr/bin/fish")
-
-(add-hook 'term-mode-hook
-          (lambda ()
-            (setq show-trailing-whitespace nil)
-            (autopair-mode -1)))
-
-(defcustom term-unbind-key-list
-  '("C-z" "C-x" "C-c" "C-h" "C-y" "<ESC>")
-  "The key list that will need to be unbind."
-  :type 'list
-  :group 'multi-term)
-
-(defcustom term-bind-key-alist
-  '(
-    ("C-c C-c" . term-interrupt-subjob)
-    ("C-p" . previous-line)
-    ("C-n" . next-line)
-    ("C-s" . isearch-forward)
-    ("C-r" . isearch-backward)
-    ("C-m" . term-send-raw)
-    ("M-f" . term-send-forward-word)
-    ("M-b" . term-send-backward-word)
-    ("M-o" . term-send-backspace)
-    ("M-p" . term-send-up)
-    ("M-n" . term-send-down)
-    ("M-M" . term-send-forward-kill-word)
-    ("M-N" . term-send-backward-kill-word)
-    ("M-r" . term-send-reverse-search-history)
-    ("M-," . term-send-input)
-    ("M-." . comint-dynamic-complete))
-  "The key alist that will need to be bind"
-   :type 'alist
-   :group 'multi-term)
-
-(add-hook 'term-mode-hook
-          (lambda ()
-            (add-to-list 'term-bind-key-alist '("M-[" . multi-term-prev))
-            (add-to-list 'term-bind-key-alist '("M-]" . multi-term-next))))
-
-(add-hook 'term-mode-hook
-          (lambda ()
-            (define-key term-raw-map (kbd "C-y") 'term-paste)))
-
-(add-hook 'term-mode-hook 'my-inhibit-global-linum-mode)
-
-(defun my-inhibit-global-linum-mode ()
-  "Counter-act `global-linum-mode'."
-  (add-hook 'after-change-major-mode-hook
-            (lambda () (linum-mode 0))
-            :append :local))
-
 ;; Turn off Bell completely
 (setq ring-bell-function 'ignore)
 
@@ -290,5 +237,17 @@
 (global-set-key (kbd "M-<up>") 'move-line-up)
 (global-set-key (kbd "M-<down>") 'move-line-down)
 
-;; Open Terminal Instantly
-(global-set-key (kbd "M-t") 'multi-term)
+;; Add Copy to clipboard
+(xclip-mode 1)
+
+;; Enable Cua Mode
+(cua-mode 1)
+
+;; Auto reload file if changed on disk
+(global-auto-revert-mode t)
+
+;; Tramp to use ssh instead of scp by default
+(setq tramp-default-method "ssh")
+
+;; Add Magit status shortcut
+(global-set-key (kbd "C-x g") 'magit-status)
