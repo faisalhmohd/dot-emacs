@@ -9,6 +9,8 @@
 	     '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+	     '("melpa-stable" . "https://stable.melpa.org/packages/"))
 
 ;; Setup Packages
 (defvar faisal/packages '(autopair
@@ -24,7 +26,10 @@
                           yasnippet-snippets
                           php-mode
 			  magit
-                          )
+			  elpy
+			  anzu
+			  twittering-mode
+			  )
   "Default packages")
 
 (defun faisal/packages-installed-p ()
@@ -46,6 +51,12 @@
 (define-key yas-minor-mode-map (kbd "<tab>") nil)
 (define-key yas-minor-mode-map (kbd "TAB") nil)
 (define-key yas-minor-mode-map (kbd "C-t") 'yas-expand)
+
+;; Enable Elpy
+(elpy-enable)
+
+;; Enable Anzu
+(global-anzu-mode +1)
 
 ;; Splash Screen in Org Mode
 
@@ -117,6 +128,7 @@
 
 ;; turn on autocomplete
 (ac-config-default)
+(add-hook 'python-mode-hook (lambda () (auto-complete-mode -1)))
 
 ;; Highlight words
 (add-hook 'prog-mode-hook (lambda () (idle-highlight-mode t)))
@@ -167,6 +179,11 @@
 (global-linum-mode t)
 (setq linum-format "%4d\u2502 ")
 
+;; Hide Line Numbers for EShell
+(add-hook 'eshell-mode-hook (lambda()
+			      (linum-mode -1)
+            ))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -174,7 +191,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (xclip use-package yasnippet-classic-snippets yasnippet php-mode aggressive-indent idle-highlight-mode gruvbox-theme spacemacs-theme rjsx-mode ido-vertical-mode auto-complete autopair))))
+    (twittering-mode anzu elpy flycheck xclip use-package yasnippet-classic-snippets yasnippet php-mode aggressive-indent idle-highlight-mode gruvbox-theme spacemacs-theme rjsx-mode ido-vertical-mode auto-complete autopair))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
