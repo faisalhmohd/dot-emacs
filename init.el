@@ -25,11 +25,11 @@
                           yasnippet
                           yasnippet-snippets
                           php-mode
-			  magit
-			  elpy
-			  anzu
-			  twittering-mode
-			  )
+                          magit
+                          elpy
+                          anzu
+                          twittering-mode
+                          )
   "Default packages")
 
 (defun faisal/packages-installed-p ()
@@ -155,7 +155,7 @@
   (setq js-indent-level 2))
 
 (add-hook 'js-mode-hook 'js-custom)
-(add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
 
 ;; Load wombat theme
 (load-theme 'wombat t)
@@ -255,7 +255,7 @@
 (global-set-key (kbd "M-<down>") 'move-line-down)
 
 ;; Add Copy to clipboard
-(xclip-mode 1)
+;; (xclip-mode 1)
 
 ;; Enable Cua Mode
 (cua-mode 1)
