@@ -2,45 +2,54 @@
 (setq user-full-name "Mohammad Faisal")
 (setq user-mail-address "faisalhmohd@gmail.com")
 
+;; Create backtraces on erros
+(setq debug-on-error t)
+
+;; Set Lisp Indentation to 2
+(setq lisp-body-indent 1)
+
 ;; Package Management
 (load "package")
 (package-initialize)
+(print package-archives)
 (add-to-list 'package-archives
-	     '("marmalade" . "http://marmalade-repo.org/packages/"))
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/") t)
+             '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
-	     '("melpa-stable" . "https://stable.melpa.org/packages/"))
+             '("melpa-stable" . "https://stable.melpa.org/packages/"))
 
 ;; Setup Packages
-(defvar faisal/packages '(autopair
-                          auto-complete
-                          projectile
-                          web-mode
-                          ido-vertical-mode
-                          idle-highlight-mode
-                          rjsx-mode
-                          ag
-                          yaml-mode
-                          yasnippet
-                          yasnippet-snippets
-                          php-mode
-                          magit
-                          elpy
-                          anzu
-                          twittering-mode
-                          )
-  "Default packages")
+(setq my-packages 
+ '(autopair
+   auto-complete
+   projectile
+   web-mode
+   ido-vertical-mode
+   idle-highlight-mode
+   rjsx-mode
+   ag
+   yaml-mode
+   yasnippet
+   yasnippet-snippets
+   php-mode
+   rainbow-mode
+   magit
+   elpy
+   anzu
+   tide
+   )
+)
 
-(defun faisal/packages-installed-p ()
-  (cl-loop for pkg in faisal/packages
+(defun is-packages-installed ()
+  (cl-loop for pkg in my-packages
         when (not (package-installed-p pkg)) do (cl-return nil)
         finally (cl-return t)))
 
-(unless (faisal/packages-installed-p)
+(unless (is-packages-installed)
   (message "%s" "Refreshing package database...")
   (package-refresh-contents)
-  (dolist (pkg faisal/packages)
+  (dolist (pkg my-packages)
     (when (not (package-installed-p pkg))
       (package-install pkg))))
 
@@ -52,13 +61,13 @@
 (define-key yas-minor-mode-map (kbd "TAB") nil)
 (define-key yas-minor-mode-map (kbd "C-t") 'yas-expand)
 
-;; Enable Elpy
+;; Enable Elpy | Python Support
 (elpy-enable)
 
-;; Enable Anzu
+;; Enable Anzu | Display Search Results Better
 (global-anzu-mode +1)
 
-;; Splash Screen in Org Mode
+;; Splash Screen in Org Mode 
 
 (setq inhibit-splash-screen t
       initial-scratch-message nil
@@ -82,11 +91,6 @@
 (xterm-mouse-mode 1)
 (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
 (global-set-key (kbd "<mouse-5>") 'scroll-up-line)
-
-;; Remove tabs and set width to 2
-(setq tab-width 2
-      indent-tabs-mode nil)
-(setq css-indent-offset 2)
 
 ;; Never backup files
 (setq make-backup-files nil)
@@ -114,6 +118,7 @@
 ;; Use visual indicator instead of noises
 (setq echo-keystrokes 0.1
       use-dialog-box nil)
+
 ;; Enable ido mode for navigating in filesystem
 (ido-mode t)
 (setq ido-enable-flex-matching t
@@ -133,29 +138,9 @@
 ;; Highlight words
 (add-hook 'prog-mode-hook (lambda () (idle-highlight-mode t)))
 
-;; Add Web Mode
-
-(setq web-mode-style-padding 2)
-(setq web-mode-script-padding 2)
-(setq web-mode-markup-indent-offset 2)
-(setq web-mode-css-indent-offset 2)
-(setq web-mode-code-indent-offset 2)
-
-(add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-
 ;; YAML support
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 (add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
-
-;; JS Mode
-(defun js-custom ()
-  "js-mode-hook"
-  (setq js-indent-level 2))
-
-(add-hook 'js-mode-hook 'js-custom)
-(add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
 
 ;; Load wombat theme
 (load-theme 'wombat t)
@@ -180,9 +165,10 @@
 (setq linum-format "%4d\u2502 ")
 
 ;; Hide Line Numbers for EShell
-(add-hook 'eshell-mode-hook (lambda()
-			      (linum-mode -1)
-            ))
+(add-hook 'eshell-mode-hook
+	  (lambda()
+	   (linum-mode -1)
+	   ))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -191,31 +177,13 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (twittering-mode anzu elpy flycheck xclip use-package yasnippet-classic-snippets yasnippet php-mode aggressive-indent idle-highlight-mode gruvbox-theme spacemacs-theme rjsx-mode ido-vertical-mode auto-complete autopair))))
+    (rainbow-mode tide anzu elpy flycheck xclip use-package yasnippet-classic-snippets yasnippet php-mode aggressive-indent idle-highlight-mode gruvbox-theme spacemacs-theme rjsx-mode ido-vertical-mode auto-complete autopair))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
-;; set maximum indentation for description lists
-(setq org-list-description-max-indent 5)
-
-;; prevent demoting heading also shifting text inside sections
-(setq org-adapt-indentation nil)
-(setq org-startup-folded nil)
-(setq org-support-shift-select t)
-
-(setq org-capture-templates
-      '(("t" "todo" entry (file+headline "~/todo.org" "Tasks")
-         "* TODO [#A] %?\nSCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+0d\"))\n")))
-
-;; set key for agenda
-(global-set-key (kbd "C-c a") 'org-agenda)
-
-;;capture todo items using C-c c t
-(define-key global-map (kbd "C-c c") 'org-capture)
 
 (setq org-agenda-files (quote ("~/todo.org")))
 
@@ -268,3 +236,54 @@
 
 ;; Add Magit status shortcut
 (global-set-key (kbd "C-x g") 'magit-status)
+
+;; Add Web Mode
+
+(setq web-mode-style-padding 2)
+(setq web-mode-script-padding 2)
+(setq web-mode-markup-indent-offset 2)
+(setq web-mode-code-indent-offset 2)
+
+(add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+
+;; JS Mode
+;; (add-to-list 'auto-mode-alist '("\\.js$" . rjsx-mode))
+
+;; Add TypeScript Support
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  (company-mode +1))
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "tsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (when (string-equal "jsx" (file-name-extension buffer-file-name))
+              (setup-tide-mode))))
+
+;; Highlight Current Line
+(global-hl-line-mode 1)
+(set-face-background 'hl-line "#000")
+(set-face-foreground 'highlight nil)
+
+;; Remove tabs and set width to 2
+(setq-default indent-tabs-mode nil)
+(setq-default js-indent-level 2)
+(setq-default css-indent-offset 2)
