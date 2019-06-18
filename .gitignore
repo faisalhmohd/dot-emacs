@@ -6,3 +6,5 @@ ac-comphist.dat
 *.eld
 recentf
 session.*
+\#*\#
+transient
